@@ -1,12 +1,10 @@
-import dotenv from "dotenv";
+import "./config/env.js";
 import { createServer } from "node:http";
 import app from "./app.js";
 import { connectDatabase } from "./config/database.js";
 import { initializeSocket } from "./socket/socketServer.js";
 
-dotenv.config();
-
-const PORT = process.env.PORT || 5000;
+const PORT = Number(process.env.PORT) || 5000;
 
 const startServer = async (): Promise<void> => {
   try {
@@ -15,7 +13,7 @@ const startServer = async (): Promise<void> => {
 
     const httpServer = createServer(app);
     initializeSocket(httpServer);
-    httpServer.listen(PORT, () => {
+    httpServer.listen(PORT, "0.0.0.0", () => {
       console.log(`Server running on port ${PORT}`);
     });
   } catch (error) {

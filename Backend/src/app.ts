@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import { isClientOriginAllowed } from "./config/cors.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorMiddleware.js";
 import agentTicketRoutes from "./routes/agentTicketRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
@@ -8,7 +9,9 @@ import ticketRoutes from "./routes/ticketRoutes.js";
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: (origin, callback) => callback(null, isClientOriginAllowed(origin)),
+}));
 app.use(express.json());
 
 app.get("/api/health", (_req, res) => {

@@ -1,5 +1,6 @@
 import type { Server as HttpServer } from "node:http";
 import { Server } from "socket.io";
+import { isClientOriginAllowed } from "../config/cors.js";
 import Ticket from "../models/Ticket.js";
 import User, { type UserRole } from "../models/User.js";
 import { verifyToken } from "../utils/auth.js";
@@ -16,7 +17,7 @@ const roomName = (ticketId: string) => `ticket:${ticketId}`;
 export const initializeSocket = (httpServer: HttpServer): Server => {
   io = new Server(httpServer, {
     cors: {
-      origin: process.env.CLIENT_URL || "http://localhost:5173",
+      origin: (origin, callback) => callback(null, isClientOriginAllowed(origin)),
       methods: ["GET", "POST"],
     },
   });
