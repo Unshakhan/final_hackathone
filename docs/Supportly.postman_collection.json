@@ -1,0 +1,91 @@
+{
+  "info": {
+    "name": "Supportly API",
+    "description": "Auth, customer ticket, agent workflow, message, and dashboard requests. Run login requests to populate token variables.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "customerEmail", "value": "customer@demo.com" },
+    { "key": "agentEmail", "value": "agent@demo.com" },
+    { "key": "demoPassword", "value": "" },
+    { "key": "customerToken", "value": "" },
+    { "key": "agentToken", "value": "" },
+    { "key": "ticketId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register customer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Demo Customer\",\n  \"email\": \"new.customer@example.com\",\n  \"password\": \"{{demoPassword}}\"\n}" },
+            "url": "{{baseUrl}}/api/auth/register"
+          }
+        },
+        {
+          "name": "Login customer",
+          "event": [{ "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.data?.token) pm.collectionVariables.set('customerToken', json.data.token);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{customerEmail}}\",\n  \"password\": \"{{demoPassword}}\"\n}" },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Login agent",
+          "event": [{ "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.data?.token) pm.collectionVariables.set('agentToken', json.data.token);"] } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{agentEmail}}\",\n  \"password\": \"{{demoPassword}}\"\n}" },
+            "url": "{{baseUrl}}/api/auth/login"
+          }
+        },
+        {
+          "name": "Current user",
+          "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}", "type": "string" }] }, "url": "{{baseUrl}}/api/auth/me" }
+        }
+      ]
+    },
+    {
+      "name": "Customer tickets and messages",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}", "type": "string" }] },
+      "item": [
+        {
+          "name": "Create ticket",
+          "event": [{ "listen": "test", "script": { "exec": ["const json = pm.response.json();", "if (json.data?.ticket?._id) pm.collectionVariables.set('ticketId', json.data.ticket._id);"] } }],
+          "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"subject\": \"Urgent duplicate payment\",\n  \"description\": \"I was charged twice for the same invoice and need urgent help.\",\n  \"customerSelectedCategory\": \"Billing\"\n}" }, "url": "{{baseUrl}}/api/tickets" }
+        },
+        { "name": "My tickets", "request": { "method": "GET", "url": "{{baseUrl}}/api/tickets/my" } },
+        { "name": "Ticket details", "request": { "method": "GET", "url": "{{baseUrl}}/api/tickets/{{ticketId}}" } },
+        { "name": "Ticket messages", "request": { "method": "GET", "url": "{{baseUrl}}/api/tickets/{{ticketId}}/messages" } },
+        { "name": "Send customer message", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"message\": \"Could you share an update on this request?\"\n}" }, "url": "{{baseUrl}}/api/tickets/{{ticketId}}/messages" } }
+      ]
+    },
+    {
+      "name": "Agent workflow and messages",
+      "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{agentToken}}", "type": "string" }] },
+      "item": [
+        { "name": "Assigned tickets", "request": { "method": "GET", "url": "{{baseUrl}}/api/agent/tickets" } },
+        { "name": "Assigned ticket details", "request": { "method": "GET", "url": "{{baseUrl}}/api/agent/tickets/{{ticketId}}" } },
+        { "name": "Assigned ticket messages", "request": { "method": "GET", "url": "{{baseUrl}}/api/agent/tickets/{{ticketId}}/messages" } },
+        { "name": "Save final triage", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"category\": \"Billing\",\n  \"priority\": \"High\",\n  \"summary\": \"Duplicate payment confirmed for human review.\"\n}" }, "url": "{{baseUrl}}/api/agent/tickets/{{ticketId}}/triage" } },
+        { "name": "Advance status", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"status\": \"In Progress\"\n}" }, "url": "{{baseUrl}}/api/agent/tickets/{{ticketId}}/status" } },
+        { "name": "Send agent message", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"message\": \"We are reviewing the duplicate charge.\"\n}" }, "url": "{{baseUrl}}/api/agent/tickets/{{ticketId}}/messages" } },
+        { "name": "Resolve ticket", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"resolutionNote\": \"Duplicate charge verified and sent for refund processing.\"\n}" }, "url": "{{baseUrl}}/api/agent/tickets/{{ticketId}}/resolve" } }
+      ]
+    },
+    {
+      "name": "Dashboards",
+      "item": [
+        { "name": "Customer dashboard", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}", "type": "string" }] }, "url": "{{baseUrl}}/api/dashboard/customer" } },
+        { "name": "Agent dashboard", "request": { "method": "GET", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{agentToken}}", "type": "string" }] }, "url": "{{baseUrl}}/api/dashboard/agent" } }
+      ]
+    }
+  ]
+}
