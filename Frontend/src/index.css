@@ -1,9 +1,78 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
-:root { font-family: "DM Sans", system-ui, sans-serif; color: #172033; background: #f5f7fb; font-synthesis: none; text-rendering: optimizeLegibility; --navy:#101b3f; --blue:#3157d5; --blue-dark:#2546b3; --text:#172033; --muted:#697289; --border:#e2e7f0; --surface:#fff; }
+
+:root {
+  font-family: "DM Sans", Inter, system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  color-scheme: light;
+  --font-display: "Manrope", "DM Sans", system-ui, sans-serif;
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-soft: #f8faff;
+  --surface-muted: #f0f3f9;
+  --text: #172033;
+  --text-soft: #45516a;
+  --muted: #6c768c;
+  --faint: #98a2b5;
+  --border: #e1e6ef;
+  --border-strong: #cbd4e3;
+  --primary: #315bd8;
+  --primary-hover: #2549b5;
+  --primary-soft: #eaf0ff;
+  --sidebar: #101936;
+  --sidebar-soft: #19254a;
+  --sidebar-text: #aeb9d5;
+  --success: #168060;
+  --success-soft: #e8f8f1;
+  --warning: #9b6818;
+  --warning-soft: #fff5df;
+  --danger: #b93445;
+  --danger-soft: #ffedef;
+  --shadow-sm: 0 1px 2px rgb(16 24 40 / .04), 0 4px 12px rgb(16 24 40 / .04);
+  --shadow-md: 0 12px 30px rgb(16 24 40 / .09);
+  --shadow-lg: 0 24px 70px rgb(10 18 42 / .18);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 17px;
+  --transition: 180ms ease;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b1020;
+  --surface: #11182a;
+  --surface-raised: #151e33;
+  --surface-soft: #121b2f;
+  --surface-muted: #182238;
+  --text: #edf2ff;
+  --text-soft: #c4cde0;
+  --muted: #909bb1;
+  --faint: #6f7b92;
+  --border: #263149;
+  --border-strong: #34415d;
+  --primary: #7698ff;
+  --primary-hover: #91acff;
+  --primary-soft: #1d2b50;
+  --sidebar: #080d1d;
+  --sidebar-soft: #111a32;
+  --sidebar-text: #9daaca;
+  --success: #6bd2aa;
+  --success-soft: #122d27;
+  --warning: #efbf62;
+  --warning-soft: #352a17;
+  --danger: #ff8996;
+  --danger-soft: #3b1e27;
+  --shadow-sm: 0 4px 16px rgb(0 0 0 / .16);
+  --shadow-md: 0 16px 38px rgb(0 0 0 / .24);
+  --shadow-lg: 0 26px 80px rgb(0 0 0 / .42);
+}
+
 * { box-sizing: border-box; }
-html { min-width: 320px; background: #f5f7fb; }
-body { margin: 0; min-width: 320px; min-height: 100vh; }
+html { min-width: 320px; min-height: 100%; background: var(--bg); }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--bg); color: var(--text); transition: background var(--transition), color var(--transition); }
 button, input, select, textarea { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 a { color: inherit; }
+::selection { color: #fff; background: var(--primary); }
 #root { min-height: 100vh; }

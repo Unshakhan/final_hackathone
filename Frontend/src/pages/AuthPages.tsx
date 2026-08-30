@@ -1,11 +1,13 @@
 import { useState, type FormEvent, type ReactNode } from "react";
+import { Check, Headphones } from "lucide-react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { apiErrorMessage } from "../api/client";
 import { Notice } from "../components/UI";
 import { useAuth } from "../context/AuthContext";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 function AuthShell({ title, subtitle, children, footer }: { title: string; subtitle: string; children: ReactNode; footer: ReactNode }) {
-  return <div className="auth-page"><section className="auth-visual"><div className="brand light"><span className="brand-mark">S</span><span>Supportly</span></div><div><span className="eyebrow light">Customer care, simplified</span><h1>Resolve every request with clarity.</h1><p>AI-assisted triage, thoughtful human support, and every conversation in one calm workspace.</p></div><div className="auth-proof"><span>✓</span><p><strong>Fast, organized support</strong><br />Built for customers and support teams.</p></div></section><section className="auth-panel"><div className="auth-card"><span className="eyebrow">Welcome to Supportly</span><h2>{title}</h2><p className="muted">{subtitle}</p>{children}<div className="auth-footer">{footer}</div></div></section></div>;
+  return <div className="auth-page"><section className="auth-visual"><div className="brand light"><span className="brand-mark"><Headphones size={19} /></span><span>Supportly</span></div><div><span className="eyebrow light">Customer care, simplified</span><h1>Resolve every request with clarity.</h1><p>AI-assisted triage, thoughtful human support, and every conversation in one calm workspace.</p></div><div className="auth-proof"><span><Check size={16} /></span><p><strong>Fast, organized support</strong><br />Built for customers and support teams.</p></div></section><section className="auth-panel"><div className="auth-theme-toggle"><ThemeToggle /></div><div className="auth-card"><span className="eyebrow">Welcome to Supportly</span><h2>{title}</h2><p className="muted">{subtitle}</p>{children}<div className="auth-footer">{footer}</div></div></section></div>;
 }
 
 export function LoginPage() {
