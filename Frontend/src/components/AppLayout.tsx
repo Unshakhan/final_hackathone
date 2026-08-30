@@ -4,6 +4,7 @@ import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { ThemeToggle } from "./ThemeToggle";
+import { toast } from "sonner";
 
 interface NavItem { label: string; path: string; icon: LucideIcon }
 const customerLinks: NavItem[] = [
@@ -29,7 +30,7 @@ export function AppLayout() {
     </aside>
     <AnimatePresence>{open && <motion.button className="sidebar-backdrop" aria-label="Close navigation" onClick={() => setOpen(false)} initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} />}</AnimatePresence>
     <div className="main-shell">
-      <header className="topbar"><button className="icon-button menu-button" aria-label="Open navigation" onClick={() => setOpen(true)}><Menu size={20} /></button><div className="topbar-spacer" /><ThemeToggle /><div className="user-meta"><span className="avatar">{user?.name.charAt(0).toUpperCase()}</span><span><strong>{user?.name}</strong><small>{user?.role === "agent" ? "Support agent" : "Customer"}</small></span></div><button className="logout-button" onClick={logout}><LogOut size={17} aria-hidden="true" /><span>Log out</span></button></header>
+      <header className="topbar"><button className="icon-button menu-button" aria-label="Open navigation" onClick={() => setOpen(true)}><Menu size={20} /></button><div className="topbar-spacer" /><ThemeToggle /><div className="user-meta"><span className="avatar">{user?.name.charAt(0).toUpperCase()}</span><span><strong>{user?.name}</strong><small>{user?.role === "agent" ? "Support agent" : "Customer"}</small></span></div><button className="logout-button" onClick={() => { logout(); toast.info("You have been logged out.", { id: "logout" }); }}><LogOut size={17} aria-hidden="true" /><span>Log out</span></button></header>
       <motion.main className="page-content" initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .28, ease: "easeOut" }}><Outlet /></motion.main>
     </div>
   </div>;

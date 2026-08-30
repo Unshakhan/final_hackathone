@@ -22,3 +22,6 @@ p { margin-top:0; line-height:1.65 }.muted{color:var(--muted)}.wide{width:100%}
 .auth-panel{position:relative}
 .auth-theme-toggle{position:absolute;top:1.25rem;right:1.25rem}
 .back-link{display:inline-flex;align-items:center;gap:.4rem}
+.app-toast{font-family:inherit!important;border-color:var(--border)!important;box-shadow:var(--shadow-lg)!important}
+canvas{pointer-events:none}
+@media(max-width:520px){[data-sonner-toaster]{left:12px!important;right:12px!important;width:auto!important}}

@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { api, apiErrorMessage } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { getSocket } from "../socket/client";
+import { toast } from "sonner";
 import type { ApiEnvelope, TicketMessage, User } from "../types";
 import { EmptyState, Notice } from "./UI";
 
@@ -22,6 +23,6 @@ export function Conversation({ ticketId, basePath, resolved }: { ticketId: strin
     socket.on("message:new", receive);
     return () => { socket.off("message:new", receive); };
   }, [ticketId]);
-  const submit = async (event: FormEvent) => { event.preventDefault(); if (!text.trim()) return setError("Message cannot be empty."); setSending(true); setError(""); try { await api.post(`${basePath}/${ticketId}/messages`, { message: text.trim() }); setText(""); await load(); } catch (requestError) { setError(apiErrorMessage(requestError)); } finally { setSending(false); } };
+  const submit = async (event: FormEvent) => { event.preventDefault(); if (!text.trim()) return setError("Message cannot be empty."); setSending(true); setError(""); try { await api.post(`${basePath}/${ticketId}/messages`, { message: text.trim() }); setText(""); await load(); } catch (requestError) { const message = apiErrorMessage(requestError); setError(message); toast.error(message, { id: `message-error-${ticketId}` }); } finally { setSending(false); } };
   return <section className="panel conversation"><div className="panel-heading"><div><h2>Conversation</h2><p>Messages are saved with this ticket.</p></div></div>{error && <Notice type="error">{error}</Notice>}{loading ? <div className="message-skeleton">Loading conversation…</div> : !messages.length ? <EmptyState title="No messages yet" message="Start the conversation with a helpful update." /> : <div className="messages">{messages.map((message) => { const own = message.senderRole === user?.role; return <motion.div className={`message ${own ? "own" : ""}`} key={message._id} initial={reduceMotion ? false : { opacity: 0, y: 5, scale: .99 }} animate={{ opacity: 1, y: 0, scale: 1 }}><div className="message-head"><strong>{own ? "You" : senderName(message.sender, message.senderRole)}</strong><time>{new Date(message.createdAt).toLocaleString()}</time></div><p>{message.message}</p></motion.div>; })}</div>}{resolved ? <div className="resolved-note">This ticket is resolved. New messages are disabled.</div> : <form className="message-form" onSubmit={submit}><label className="sr-only" htmlFor="message">Message</label><textarea id="message" rows={3} value={text} onChange={(event) => setText(event.target.value)} placeholder="Write a message…" maxLength={5000} /><button className="button primary" disabled={sending || !text.trim()}>{sending ? "Sending…" : "Send message"}</button></form>}</section>;
 }
